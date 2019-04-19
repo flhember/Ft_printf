@@ -6,37 +6,36 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 13:37:40 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/15 16:04:23 by flhember         ###   ########.fr       */
+/*   Updated: 2019/04/12 17:32:24 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-#include <stdio.h>
 
-void	ft_get_size_option(t_option **list, char *str)
+static void	ft_get_size_option(t_option **list, char *str, size_t i)
 {
-	size_t		i;
-
-	i = 0;
 	while (str[i])
 	{
-		if (str[i] == 'l' || str[i] == 'h')
+		if (str[i] == 'l' || str[i] == 'h' || str[i] == 'L')
 		{
-			if (str[i - 1] == 'l' || str[i + 1] == 'l')
+			if ((str[i - 1] == 'l' || str[i + 1] == 'l') && str[i++])
 				(*list)->size = ft_strdup("ll");
-			else if (str[i - 1] == 'h' || str[i + 1] == 'h')
+			else if ((str[i - 1] == 'h' || str[i + 1] == 'h') && str[i++])
 				(*list)->size = ft_strdup("hh");
 			else
 				(*list)->size = ft_strsub(str, i, 1);
 			i++;
 		}
-		else if (str[i] == ' ' || str[i] == '-' || str[i] == '+' ||
-				(str[i] == '0' && str[i - 1] < '0' && str[i - 1] > '9'))
+		else if (str[i] == ' ' || str[i] == '-' || str[i] == '#' ||
+				str[i] == '+' || ((str[i] == '0' && str[i - 1] < '0' &&
+					str[i - 1] != '.') || (str[i] == '0' && str[i - 1] > '9'
+						&& str[i - 1] != '.')))
 		{
 			if (!(*list)->option)
 				(*list)->option = ft_strsub(str, i, 1);
 			else
-				(*list)->option = ft_strjoinfree((*list)->option, ft_strsub(str, i, 1), 3);
+				(*list)->option =
+					ft_strjoinfree((*list)->option, ft_strsub(str, i, 1), 3);
 			i++;
 		}
 		else
@@ -44,11 +43,8 @@ void	ft_get_size_option(t_option **list, char *str)
 	}
 }
 
-void	ft_get_min_prec(t_option **list, char *str)
+static void	ft_get_min_prec(t_option **list, char *str, size_t i)
 {
-	size_t		i;
-
-	i = 1;
 	while (str[i])
 	{
 		if (str[i] >= '0' && str[i] <= '9' && str[i - 1] != '.')
@@ -57,9 +53,16 @@ void	ft_get_min_prec(t_option **list, char *str)
 			while (str[i] >= '0' && str[i] <= '9')
 				i++;
 		}
+		else if (str[i] == '.' && (str[i + 1] < '0' || str[i + 1] > '9'))
+		{
+			(*list)->prec = -1;
+			i++;
+		}
 		else if (str[i] >= '0' && str[i] <= '9' && str[i - 1] == '.')
 		{
 			(*list)->prec = ft_atoi(str + i);
+			if ((*list)->prec == 0)
+				(*list)->prec = -1;
 			while (str[i] >= '0' && str[i] <= '9')
 				i++;
 		}
@@ -68,32 +71,28 @@ void	ft_get_min_prec(t_option **list, char *str)
 	}
 }
 
-void	ft_get_good_option(t_option **list)
+static void	ft_get_good_option(t_option **list, int j)
 {
 	int		i;
-	int		j;
 
-	j = 0;
 	i = 0;
 	while ((*list)->option[i])
 	{
 		if ((*list)->option[i] == '+')
 		{
-			while ((*list)->option[j])
+			while ((*list)->option[j++])
 			{
 				if ((*list)->option[j] == ' ')
 					(*list)->option[j] = '.';
-				j++;
 			}
 			j = 0;
 		}
 		else if ((*list)->option[i] == '-')
 		{
-			while ((*list)->option[j])
+			while ((*list)->option[j++])
 			{
 				if ((*list)->option[j] == '0')
 					(*list)->option[j] = '.';
-				j++;
 			}
 			j = 0;
 		}
@@ -101,14 +100,13 @@ void	ft_get_good_option(t_option **list)
 	}
 }
 
-void	ft_put_option(t_option **list)
+static void	ft_put_option(t_option **list)
 {
 	int		i;
 
 	i = 0;
 	while ((*list)->option[i])
 	{
-
 		if ((*list)->option[i] == '-')
 			(*list)->minus++;
 		if ((*list)->option[i] == '+')
@@ -127,15 +125,25 @@ void	ft_put_option(t_option **list)
 t_option	*ft_get_option(char *str)
 {
 	t_option	*list;
+	size_t		i;
+	int			j;
 
+	j = 0;
+	i = 1;
+	list = NULL;
 	if (!(list = (t_option*)malloc(sizeof(t_option))))
 		return (NULL);
-	ft_get_min_prec(&list, str);
-	ft_get_size_option(&list, str);
-	if (list->option)
+	ft_set_list(&list);
+	list->flag = str[(ft_strlen(str) - 1)];
+	if (strlen(str) > 2)
 	{
-		ft_get_good_option(&list);
-		ft_put_option(&list);
+		ft_get_min_prec(&list, str, i);
+		ft_get_size_option(&list, str, i);
+		if (list->option)
+		{
+			ft_get_good_option(&list, j);
+			ft_put_option(&list);
+		}
 	}
 	return (list);
 }

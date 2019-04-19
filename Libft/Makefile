@@ -6,7 +6,7 @@
 #    By: flhember <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/09 18:09:39 by flhember          #+#    #+#              #
-#    Updated: 2019/01/24 13:16:19 by flhember         ###   ########.fr        #
+#    Updated: 2019/04/12 14:18:22 by flhember         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,7 +80,16 @@ SRC_FILES = ft_strlen.c 	  		\
 			ft_swap.c		  		\
 			ft_str_is_lowercase.c	\
 			ft_str_is_uppercase.c	\
-			ft_strjoinfree.c		
+			ft_strjoinfree.c		\
+			ft_intlen.c				\
+			ft_lltoa.c				\
+			ft_strnewspace.c		\
+			ft_ultoa_base.c			\
+			ft_ultoa_base_big.c		\
+			ft_pow.c				\
+			ft_str_rev.c			\
+			ft_strnewnull.c			\
+			ft_clean_str.c
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 	OBJ_EXEC = $(addprefix $(OBJ_PATH), $(OBJ_FILES))

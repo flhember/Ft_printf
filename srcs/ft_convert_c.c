@@ -6,45 +6,61 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/04 14:32:16 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/07 15:49:07 by flhember         ###   ########.fr       */
+/*   Updated: 2019/04/11 13:24:19 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-//#include "../Libft/includes/libft.h"
-#include <stdio.h>
 
-static char	*ft_width_min(char *str, char var)
+static char	*ft_filling(char var, t_option **list)
 {
-	size_t	nb_space;
 	size_t	i;
-	char	*tmp;
+	char	*str;
 
 	i = 0;
-	str++;
-	nb_space = ft_atoi(str);
-	if (!(tmp = (char*)malloc(sizeof(char) * (nb_space + 1))))
-		return (0);
-	while (i < nb_space)
+	if ((*list)->min)
+		str = ft_strnewspace((*list)->min);
+	else
+		str = ft_memalloc(2);
+	if ((*list)->minus)
 	{
-		tmp[i] = ' ';
-		i++;
-	}
-	tmp[i - 1] = var;
-	tmp[i] = '\0';
-	return (tmp);
-}
-
-char		*ft_convert_c(void *var, char *str)
-{
-	int		i;
-
-	i = 1;
-	if (str[i] == 'c' && i == 1)
-	{
-		str[0] = (char)var;
-		str[1] = '\0';
+		str[0] = var;
 		return (str);
 	}
-	return (ft_width_min(str, (char)var));
+	else if ((*list)->zero)
+	{
+		while (i < (*list)->min)
+			str[i++] = '0';
+		str[i - 1] = var;
+	}
+	else
+	{
+		i = ft_strlen(str);
+		str[i - 1] = var;
+	}
+	return (str);
+}
+
+char		*ft_convert_c(va_list ap, char *str)
+{
+	t_option	*list;
+	int			tmp;
+
+	list = NULL;
+	tmp = va_arg(ap, int);
+	if (tmp == 0)
+		return (ft_strdup("%c"));
+	if (str[1] == 'c')
+	{
+		ft_strdel(&str);
+		if (!(str = ft_memalloc(2)))
+			return (NULL);
+		str[0] = tmp;
+		return (str);
+	}
+	list = ft_get_option(str);
+	ft_strdel(&str);
+	str = ft_filling(tmp, &list);
+	ft_free_option(&list);
+	return (str);
 }

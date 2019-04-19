@@ -6,13 +6,13 @@
 #    By: flhember <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/11 15:51:59 by flhember          #+#    #+#              #
-#    Updated: 2019/02/14 12:49:33 by flhember         ###   ########.fr        #
+#    Updated: 2019/04/12 17:19:02 by flhember         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libftprintf.a
 CC = clang
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -g3 -Wall -Wextra -Werror
 
 SRC_PATH = ./srcs/
 OBJ_PATH = ./obj/
@@ -23,10 +23,26 @@ SRC_FILES = ft_printf.c 		\
 			ft_set_tab.c		\
 			ft_creatlst.c		\
 			ft_convert_param.c	\
+			ft_get_option.c		\
 			ft_convert_c.c		\
 			ft_convert_s.c		\
 			ft_convert_p.c		\
-			ft_convert_i_d.c
+			ft_convert_o.c		\
+			ft_convert_x.c		\
+			ft_convert_u.c		\
+			ft_convert_f.c		\
+			ft_free.c			\
+			ft_print_tab.c		\
+			ft_convert_i_d.c	\
+			ft_get_good_size.c	\
+			ft_set_list.c		\
+			ft_put_option.c		\
+			ft_put_option_x.c	\
+			ft_ftoa.c			\
+			ft_math_str.c		\
+			ft_get_float.c		\
+			ft_util_float.c		\
+			ft_ftoa_80.c
 
 INC_FILES = ft_printf.h
 
@@ -50,7 +66,8 @@ $(LIB):
 	@make -C $(LIB_PATH)
 
 $(NAME): $(LIB) $(OBJ_PATH) $(OBJ_EXEC)
-	@ar rc $(NAME) $(OBJ_EXEC) 
+	@cp libft/libft.a $(NAME)
+	@ar rc $(NAME) $(OBJ_EXEC)
 	@ranlib $(NAME)
 	@echo "\033[1;32m$(notdir $(NAME))\033[1;0m\033[32m created.\033[0m"
 

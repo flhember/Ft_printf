@@ -1,115 +1,99 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_convert_c_i.c                                   :+:      :+:    :+:   */
+/*   ft_convert_i_d.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/05 15:10:23 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/15 16:50:36 by flhember         ###   ########.fr       */
+/*   Created: 2019/03/21 12:34:11 by flhember          #+#    #+#             */
+/*   Updated: 2019/03/30 23:19:50 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-#include <stdio.h>
 
-int		ft_intlen(void *n)
+static char		*ft_filling(char *str, char *var, t_option **list)
 {
-	int		size;
+	size_t		size_var;
 
-	size = 1;
-	if (n < 0)
+	size_var = ft_strlen(var);
+	if (var[0] == '-')
+		size_var--;
+	if ((*list)->minus && ((*list)->zero || ((*list)->prec > (int)size_var)))
+		str = ft_put_zero_minus(str, var, list);
+	if (!(*list)->minus && ((*list)->zero || ((*list)->prec > (int)size_var)))
+		str = ft_put_zero(str, var, list);
+	str = ft_put_signe(str, var, list, size_var);
+	str = ft_put_num(str, var, list, size_var);
+	return (str);
+}
+
+static size_t	ft_find_good_size2(char *var, t_option **list, size_t size)
+{
+	size_t		i;
+
+	i = 0;
+	if ((*list)->prec > (int)(*list)->min &&
+			(*list)->prec >= (int)ft_strlen(var))
 	{
-		n = -n;
-		size++;
+		size = (*list)->prec;
+		if (var[0] == '-' || (var[0] == '-' && ((*list)->minus ||
+						(*list)->space || (*list)->zero || (*list)->plus)))
+			size++;
 	}
-	while (n > 9)
-	{
-		n /= 10;
+	else
+		size = ft_strlen(var);
+	if ((var[0] != '-' && ((*list)->space || ((*list)->plus))))
 		size++;
-	}
 	return (size);
 }
 
-char	*ft_malloc_size(void *var, t_option **list)
+static size_t	ft_find_good_size(char *var, t_option **list, size_t size)
 {
-	char	*str;
 	size_t	i;
-	int		size_malloc;
-	char	*tmp;
 
 	i = 0;
-	if ((*list)->min > (*list)->prec && (*list)->min > ft_intlen((int)var))
+	if (var[0] == '0' && var[1] == '\0' &&
+			(*list)->prec == -1 && (*list)->min == 0)
+		return (0);
+	if (var[0] != '0' && var[1] != '\0' && (*list)->prec == -1)
+		(*list)->prec++;
+	if ((int)(*list)->min >= (*list)->prec && (*list)->min > ft_strlen(var))
 	{
-		printf("malloc de taille min\n");
-		size_malloc = (*list)->min;
-	}
-	else if ((*list)->prec > (*list)->min && (*list)->prec > ft_intlen((int)var))
-	{
-		printf("malloc de taille prec\n");
-		size_malloc = (*list)->prec;
+		size = (*list)->min;
+		if (var[0] == '-' && (int)(*list)->min == (*list)->prec)
+			size += 1;
+		return (size);
 	}
 	else
-		size_malloc = ft_intlen((int)var);
-	if ((*list)->plus > 0 || (*list)->space > 0 || (int)var < 0)
-		size_malloc++;
-	if (!(str = (char*)malloc(sizeof(char) * (size_malloc + 1))))
-		return (NULL);
-	str[size_malloc + 1] = '\0';
-	i = 0;
-	tmp = ft_itoa((int)var);
-	while (i < size_malloc)
-	{
-		str[i] = tmp[i];
-		i++;
-	}
-	printf("str = %s\n", str);
-	printf("size malloc = %d\n", size_malloc);
-	return (str);
+		size = ft_find_good_size2(var, list, size);
+	return (size);
 }
 
-char	*ft_convert_i_d(void *var, char *str)
+char			*ft_convert_i_d(va_list ap, char *str)
 {
 	t_option	*list;
-	int		i;
-	int		size_var;
+	char		*var;
+	char		*strfinal;
+	size_t		size_malloc;
 
-	i = 1;
+	size_malloc = 0;
+	strfinal = NULL;
 	list = NULL;
-	if ((str[i] == 'i' || str[i] == 'd') && i == 1)
+	if (str[1] == 'i' || str[1] == 'd')
 	{
-		str = ft_itoa((int)var);
-		return (str);	
+		ft_strdel(&str);
+		str = ft_itoa(va_arg(ap, int));
+		return (str);
 	}
 	list = ft_get_option(str);
-	if (!list->size)
-		str = ft_malloc_size((int*)var, &list);
-	else if (list->size[0] == 'l')
-	{
-//		if (list->size[1] && list->size[1] == 'l')
-//			str = ft_malloc_size((long long*)var, &list);
-//			else
-			str = ft_malloc_size((long*)var, &list);
-	}
-//	else if (list->size[0] == 'h')
-//	{
-		//if (list->size[1] == 'h')
-		//	str = ft_malloc_size((char*)var, &list);
-//		else
-//			str = ft_malloc_size((short*)var, &list);
-//	}
-	printf("list prec = %d\n", list->prec);
-	printf("list size = %s\n", list->size);
-	printf("list option = %s\n", list->option);
-	printf("list min = %d\n", list->min);
-	printf("list plus = %d\n", list->plus);
-	printf("list minus = %d\n", list->minus);
-	printf("list hash = %d\n", list->hash);
-	printf("list space = %d\n", list->space);
-	printf("list zero = %d\n", list->zero);
-	printf("%d\n", (int)var);
-	printf("|%s|\n", str);
-	free(list->size);
-	free(list);
-	return (str);
+	var = ft_get_good_size_signed(ap, &list);
+	size_malloc = ft_find_good_size(var, &list, size_malloc);
+	strfinal = ft_strnewspace(size_malloc);
+	if (strfinal)
+		strfinal = ft_filling(strfinal, var, &list);
+	ft_free_option(&list);
+	ft_strdel(&var);
+	ft_strdel(&str);
+	return (strfinal);
 }

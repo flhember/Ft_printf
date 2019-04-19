@@ -6,74 +6,76 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/04 17:59:31 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/15 14:11:23 by flhember         ###   ########.fr       */
+/*   Updated: 2019/03/21 17:07:58 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-//#include "../Libft/includes/libft.h"
-#include <stdio.h>
 
-static char	*ft_width_min(char *str, char *var)
+static char	*ft_filling(char *adr, t_option **list, char *tmp)
 {
-	size_t	nb_space;
-	size_t	i;
-	char	*tmp;
+	int		i;
 	int		j;
 
-	j = 0;
 	i = 0;
-	str++;
-	nb_space = ft_atoi(str);
-	if (nb_space <= ft_strlen(var))
-		return (var);
-	if (!(tmp = (char*)malloc(sizeof(char) * (nb_space))))
-		return (0);
-	while (i < nb_space)
+	j = 0;
+	if ((*list)->minus)
 	{
-		tmp[i] = ' ';
-		i++;
+		while (adr[j])
+			tmp[i++] = adr[j++];
+		return (tmp);
 	}
-	tmp[i] = '\0';
-	i = i - ft_strlen(var);
-	while (tmp[i])
-			tmp[i++] = var[j++];
+	else
+	{
+		i = ft_strlen(tmp) - ft_strlen(adr);
+		while (adr[j])
+			tmp[i++] = adr[j++];
+	}
 	return (tmp);
 }
 
-char	*ft_convert_hexa(unsigned long adr)
+static char	*ft_width_min(char *adr, t_option **list)
 {
-	int		i;
-	char	*base;
-	char	res[10];
+	size_t	i;
+	char	*tmp;
+
+	i = 0;
+	tmp = NULL;
+	if ((*list)->min <= ft_strlen(adr))
+		return (adr);
+	tmp = ft_strnewspace((*list)->min);
+	tmp = ft_filling(adr, list, tmp);
+	ft_strdel(&adr);
+	return (tmp);
+}
+
+static char	*ft_convert_hexa(unsigned long adr)
+{
 	char	*final;
+	char	*res;
 
 	final = NULL;
-	i = 8;
-	base = ft_strdup("0123456789abcdef");
-	while ((adr / 16) > 0 || i >= 8)
-	{
-		res[i] = base[(adr % 16)];
-		adr /= 16;
-		i--;
-	}
-	res[i] = base[(adr % 16)];
-	res[9] = '\0';
-	final = ft_strjoin("0x", res);
+	res = ft_ultoa_base(adr, 16);
+	final = ft_strjoinfree("0x", res, 2);
 	return (final);
 }
 
-char		*ft_convert_p(void *var, char *str)
+char		*ft_convert_p(va_list ap, char *str)
 {
-	int				i;
-	unsigned long	adr;
+	unsigned long		adr;
+	t_option			*list;
 
-	adr = (unsigned long)var;
-	i = 1;
-	if (str[i] == 'p' && i == 1)
+	list = NULL;
+	adr = va_arg(ap, unsigned long);
+	if (str[1] == 'p')
 	{
+		ft_strdel(&str);
 		str = ft_convert_hexa(adr);
 		return (str);
 	}
-	return (ft_width_min(str, ft_convert_hexa(adr)));
+	list = ft_get_option(str);
+	ft_strdel(&str);
+	str = ft_width_min(ft_convert_hexa(adr), &list);
+	ft_free_option(&list);
+	return (str);
 }

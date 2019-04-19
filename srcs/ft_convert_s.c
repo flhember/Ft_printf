@@ -6,50 +6,103 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/04 16:49:07 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/07 15:49:36 by flhember         ###   ########.fr       */
+/*   Updated: 2019/03/21 18:17:19 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-//#include "../Libft/includes/libft.h"
-#include <stdio.h>
 
-static char	*ft_width_min(char *str, char *var)
+static char	*ft_filling(char *var, t_option **list, char *str)
 {
-	size_t	nb_space;
 	size_t	i;
-	char	*tmp;
 	int		j;
 
 	j = 0;
 	i = 0;
-	str++;
-	nb_space = ft_atoi(str);
-	if (nb_space <= ft_strlen(var))
-		return (var);
-	if (!(tmp = (char*)malloc(sizeof(char) * (nb_space))))
-		return (0);
-	while (i < nb_space)
+	if ((*list)->minus)
 	{
-		tmp[i] = ' ';
-		i++;
-	}
-	tmp[i] = '\0';
-	i = i - ft_strlen(var);
-	while (tmp[i])
-		tmp[i++] = var[j++];
-	return (tmp);
-}
-
-char		*ft_convert_s(void *var, char *str)
-{
-	int		i;
-
-	i = 1;
-	if (str[i] == 's' && i == 1)
-	{
-		str = ((char*)var);
+		while (var[j])
+			str[i++] = var[j++];
 		return (str);
 	}
-	return (ft_width_min(str, var));
+	i = ft_strlen(str) - ft_strlen(var);
+	while (str[i])
+		str[i++] = var[j++];
+	if ((*list)->zero)
+	{
+		i = 0;
+		while (str[i] == ' ')
+			str[i++] = '0';
+	}
+	return (str);
+}
+
+static char	*ft_filling_prec(char *var, t_option **list, char *str)
+{
+	int		j;
+	int		i;
+
+	j = 0;
+	i = 0;
+	if ((*list)->minus)
+	{
+		while (j < (*list)->prec)
+			str[i++] = var[j++];
+		return (str);
+	}
+	i = ft_strlen(str) - (*list)->prec;
+	while (str[i])
+		str[i++] = var[j++];
+	return (str);
+}
+
+static char	*ft_width_min(char *var, t_option **list)
+{
+	char	*tmp;
+
+	tmp = NULL;
+	if ((*list)->prec == -1)
+		return (tmp = ft_strdup(""));
+	else if ((*list)->min > ft_strlen(var))
+		tmp = ft_strnewspace((*list)->min);
+	else if ((*list)->prec != 0 && (*list)->prec < (int)ft_strlen(var)
+			&& (int)(*list)->min < (*list)->prec)
+		tmp = ft_strnewspace((*list)->prec);
+	else if ((*list)->prec != 0 && (*list)->prec < (int)ft_strlen(var)
+			&& (int)(*list)->min >= (*list)->prec)
+		tmp = ft_strnewspace((*list)->min);
+	else
+		tmp = ft_strnewspace(ft_strlen(var));
+	if ((*list)->prec != 0 && (*list)->prec < (int)ft_strlen(var))
+		return (ft_filling_prec(var, list, tmp));
+	return (ft_filling(var, list, tmp));
+}
+
+char		*ft_convert_s(va_list ap, char *str)
+{
+	t_option	*list;
+	char		*tmp;
+	int			flag;
+
+	flag = 1;
+	tmp = va_arg(ap, char*);
+	list = NULL;
+	if (tmp == NULL)
+	{
+		tmp = ft_strdup("(null)");
+		flag = 0;
+	}
+	if (str[1] == 's')
+	{
+		ft_strdel(&str);
+		str = ft_strdup(tmp);
+		return (str);
+	}
+	list = ft_get_option(str);
+	ft_strdel(&str);
+	str = ft_width_min(tmp, &list);
+	ft_free_option(&list);
+	if (!flag)
+		ft_strdel(&tmp);
+	return (str);
 }

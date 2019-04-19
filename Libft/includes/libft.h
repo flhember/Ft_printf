@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/09 18:13:18 by flhember          #+#    #+#             */
-/*   Updated: 2019/01/21 13:37:55 by brpinto          ###   ########.fr       */
+/*   Updated: 2019/04/12 14:18:57 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <limits.h>
 
 typedef struct		s_list
 {
@@ -87,4 +88,14 @@ char				*ft_strjoinfree(char *s1, char *s2, int n);
 void				ft_swap(int *a, int *b);
 int					ft_str_is_lowercase(char *str);
 int					ft_str_is_uppercase(char *str);
+int					ft_intlen(long long n);
+char				*ft_lltoa(long long n);
+char				*ft_strnewspace(size_t size);
+char				*ft_ultoa_base(unsigned long n, int base);
+char				*ft_ultoa_base_big(unsigned long n, int base);
+long double			ft_pow(long double a, long double b);
+char				*ft_str_rev(char *str);
+char				*ft_strnewnull(char *str, size_t size);
+char				*ft_clean_str(char *str);
+
 #endif

@@ -6,15 +6,13 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 16:12:25 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/07 15:49:45 by flhember         ###   ########.fr       */
+/*   Updated: 2019/04/01 19:37:03 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-//#include "../Libft/includes/libft.h"
-#include <stdio.h>
 
-static t_conv	*ft_creat_maillon(char c, char *(*ft)(void *var, char *str))
+static t_conv	*ft_creat_maillon(char c, char *(*ft)(va_list ap, char *str))
 {
 	t_conv	*new;
 
@@ -46,5 +44,15 @@ void			ft_creatlst(t_conv **list)
 	tmp = ft_creat_maillon('i', &ft_convert_i_d);
 	ft_add_maillon(list, tmp);
 	tmp = ft_creat_maillon('d', &ft_convert_i_d);
+	ft_add_maillon(list, tmp);
+	tmp = ft_creat_maillon('o', &ft_convert_o);
+	ft_add_maillon(list, tmp);
+	tmp = ft_creat_maillon('x', &ft_convert_x);
+	ft_add_maillon(list, tmp);
+	tmp = ft_creat_maillon('X', &ft_convert_x);
+	ft_add_maillon(list, tmp);
+	tmp = ft_creat_maillon('u', &ft_convert_u);
+	ft_add_maillon(list, tmp);
+	tmp = ft_creat_maillon('f', &ft_convert_f);
 	ft_add_maillon(list, tmp);
 }

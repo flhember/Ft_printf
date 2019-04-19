@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   ft_convert_b.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/07 15:55:00 by flhember          #+#    #+#             */
-/*   Updated: 2019/02/08 14:41:50 by flhember         ###   ########.fr       */
+/*   Created: 2019/04/12 17:50:51 by flhember          #+#    #+#             */
+/*   Updated: 2019/04/12 17:59:28 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-
-int main()
+char	*ft_convert_b(va_list ap, char *str)
 {
-	int		c = 12;
-	printf("int c = % 0d", c);
-	return (0);
+	long double f;
+	
+	f = va_arg(ap, long double);
+	str = ft_get_bin(&f, sizeof(f));
+
+	return (str);
 }
