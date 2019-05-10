@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 16:12:25 by flhember          #+#    #+#             */
-/*   Updated: 2019/04/01 19:37:03 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/08 14:31:35 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,14 @@ static void		ft_add_maillon(t_conv **list, t_conv *new)
 {
 	new->next = *list;
 	*list = new;
+}
+
+void			ft_createndlst(t_conv **list)
+{
+	t_conv	*tmp;
+
+	tmp = ft_creat_maillon('%', &ft_convert_percent);
+	ft_add_maillon(list, tmp);
 }
 
 void			ft_creatlst(t_conv **list)
@@ -55,4 +63,7 @@ void			ft_creatlst(t_conv **list)
 	ft_add_maillon(list, tmp);
 	tmp = ft_creat_maillon('f', &ft_convert_f);
 	ft_add_maillon(list, tmp);
+	tmp = ft_creat_maillon('b', &ft_convert_b);
+	ft_add_maillon(list, tmp);
+	ft_createndlst(list);
 }

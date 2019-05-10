@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/04 16:49:07 by flhember          #+#    #+#             */
-/*   Updated: 2019/03/21 18:17:19 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/06 18:09:26 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,13 @@ char		*ft_convert_s(va_list ap, char *str)
 	{
 		ft_strdel(&str);
 		str = ft_strdup(tmp);
+		flag == 0 ? ft_strdel(&tmp) : tmp;
 		return (str);
 	}
 	list = ft_get_option(str);
 	ft_strdel(&str);
 	str = ft_width_min(tmp, &list);
 	ft_free_option(&list);
-	if (!flag)
-		ft_strdel(&tmp);
+	flag == 0 ? ft_strdel(&tmp) : tmp;
 	return (str);
 }

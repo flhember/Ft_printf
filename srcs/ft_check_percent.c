@@ -1,42 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_convert_param.c                                 :+:      :+:    :+:   */
+/*   ft_check_percent.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/04 12:22:17 by flhember          #+#    #+#             */
-/*   Updated: 2019/05/06 12:33:13 by flhember         ###   ########.fr       */
+/*   Created: 2019/05/01 16:08:43 by flhember          #+#    #+#             */
+/*   Updated: 2019/05/02 17:28:59 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
 
-char	**ft_convert_param(char **tab, t_conv **list, va_list ap)
+static char	*ft_check(char *str)
 {
-	int		j;
-	int		flag;
-	t_conv	*tmp;
+	int		i;
+	char	*tmp;
+	char	*tmp2;
 
-	tmp = *list;
-	j = 0;
-	while (tab[j])
+	i = 0;
+	tmp = NULL;
+	tmp2 = NULL;
+	while (str[i] && str[i + 1])
 	{
-		flag = 0;
-		if (tab[j][0] == '%' && tab[j][1] != '%')
+		if (str[i] == '%' && str[i + 1] == '%')
 		{
-			while (!flag && tmp)
-			{
-				if (!flag && tmp->type == tab[j][(ft_strlen((tab[j]))) - 1])
-				{
-					tab[j] = tmp->f(ap, tab[j]);
-					flag++;
-				}
-				tmp = tmp->next;
-			}
-			tmp = *list;
+			tmp = ft_strsub(str, 0, i);
+			tmp2 = ft_strsub(str, i + 1, ft_strlen(str) - i);
+			ft_strdel(&str);
+			str = ft_strjoinfree(tmp, tmp2, 3);
 		}
-		j++;
+		i++;
+	}
+	return (str);
+}
+
+char		**ft_check_percent(char **tab)
+{
+	int		i;
+
+	i = 0;
+	while (tab[i])
+	{
+		tab[i] = ft_check(tab[i]);
+		i++;
 	}
 	return (tab);
 }

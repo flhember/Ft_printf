@@ -6,11 +6,11 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/21 14:50:34 by flhember          #+#    #+#             */
-/*   Updated: 2019/03/07 02:35:06 by flhember         ###   ########.fr       */
+/*   Updated: 2019/04/29 12:54:29 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		ft_intlen(long long	n)
+int		ft_intlen(long long n)
 {
 	int		size;
 

@@ -1,41 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ftoa.c                                          :+:      :+:    :+:   */
+/*   ft_return_null_x.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/11 16:31:01 by flhember          #+#    #+#             */
-/*   Updated: 2019/03/13 17:17:57 by flhember         ###   ########.fr       */
+/*   Created: 2019/04/25 14:26:31 by flhember          #+#    #+#             */
+/*   Updated: 2019/05/01 12:38:47 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include <libft.h>
+#include "../includes/ft_printf.h"
 
-#include <stdio.h>
-
-char			*ft_ftoa(long double n)
+char	*ft_return_null_x(t_option **list, char *str, char *var_hexa)
 {
-	float tmp;
-	long int	dec;
-	char		*str;
-
-	str = NULL;
-	dec = n;
-	tmp = n - dec;
-	//tmp = (int)n;
-	printf("tmp = %f\n", tmp);
-	printf("test = %.20f\n", 23.2323);
-	return (str);
-}
-
-int 		main()
-{
-	float 	f = 23.2323;
-	char	*str;
-	
-	printf("test = %.50f\n", 23.2323);
-	printf("f = %s\n", ft_ftoa(f));
-
-	return (0);
+	ft_free_option(list);
+	ft_strdel(&str);
+	ft_strdel(&var_hexa);
+	return (ft_strdup(""));
 }

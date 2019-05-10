@@ -6,110 +6,100 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/28 18:12:12 by flhember          #+#    #+#             */
-/*   Updated: 2019/04/19 13:22:33 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/06 18:09:08 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
-#include <math.h>
-#include <float.h>
-#include <limits.h>
 
-void	ft_cut_bin_64(t_ftoa **list)
+static char		*ft_get_expo(t_ftoa **list)
 {
-	(*list)->signe = (int)(*list)->bin[0] - 48;
-	(*list)->expo = ft_strsub((*list)->bin, 1, 11);
-	(*list)->mant = ft_strsub((*list)->bin, 12, 52);
-	ft_strdel(&(*list)->bin);
+	int			i;
+	int			j;
+	long double	tmp;
+	char		*exp;
+
+	i = 11;
+	j = 0;
+	tmp = 0;
+	exp = NULL;
+	while (--i >= 0)
+	{
+		if ((*list)->expo[i] == '1')
+			tmp += ft_pow(2, j);
+		j++;
+	}
+	tmp -= 1023;
+	if (tmp <= 0)
+	{
+		tmp = ft_pow(2, tmp);
+		exp = ft_ld_in_str(tmp, 0);
+	}
+	else
+		exp = ft_pow_to_str((long)tmp);
+	ft_strdel(&(*list)->expo);
+	return (exp);
 }
 
-char	*ft_nan_inf(t_ftoa **list)
+static char		*ft_get_mant(t_ftoa **list)
 {
-	char	*str;
-	size_t		i;
+	int			i;
+	int			j;
+	long double	tmp;
+	char		*mant;
 
 	i = 0;
-	str = NULL;
-	while ((*list)->expo[i] == '1')
-		i++;
-	if (i == ft_strlen((*list)->expo))
+	j = -1;
+	tmp = 0;
+	mant = NULL;
+	while ((*list)->mant[i])
 	{
-		i = 0;
-		if ((*list)->signe == 0)
-			str = ft_strdup("inf");
-		else if ((*list)->signe == 1)
-			str = ft_strdup("-inf");
-		while ((*list)->mant[i] == '0')
-			i++;
-		if (i < ft_strlen((*list)->mant) - 1)
-		{
-			free(str);
-			str = ft_strdup("nan");
-		}
+		if ((*list)->mant[i] == '1')
+			tmp += ft_pow(2, j);
+		j--;
+		i++;
 	}
-	if (str != NULL)
-		ft_free_ftoa(list);
-	return (str);
+	mant = ft_ld_in_str(tmp, 1);
+	ft_strdel(&(*list)->mant);
+	return (mant);
 }
 
-char	*ft_zero_prec(char *str, int i)
+static void		ft_set_list_ftoadbl(t_ftoa **list, t_ftoa64 ieee)
 {
-	char	*str_cpy;
-	int		j;
-	int		k;
-
-	j = 0;
-	k = ft_strlen(str) - 1;
-	str_cpy = ft_strdup(str);
-	while (str[j] != '.')
-		j++;
-	k -= j;
-	while (k++ < i)
-		str_cpy = ft_strjoinfree(str_cpy, "0", 1);
-	ft_strdel(&str);
-	return (str_cpy);
+	(*list)->mant = ft_ultoa_base(ieee.bin.mant1, 2);
+	(*list)->expo = ft_ultoa_base(ieee.bin.expo, 2);
+	(*list)->signe = ieee.bin.signe;
+	while (ft_strlen((*list)->expo) != 11)
+		(*list)->expo = ft_strjoinfree("0", (*list)->expo, 2);
+	while (ft_strlen((*list)->mant) != 52)
+		(*list)->mant = ft_strjoinfree("0", (*list)->mant, 2);
 }
 
-char	*ft_ftoa_64(double f, int prec, int hash)
+char			*ft_ftoa_dbl(double f, int prec, int hash)
 {
-	t_ftoa	*list;
-	char	*str;
-	int		vir;
+	t_ftoa		*list;
+	t_ftoa64	ieee;
+	char		*str;
+	int			vir;
 
 	str = NULL;
+	ieee.d = f;
+	vir = 0;
 	if (!(list = malloc(sizeof(t_ftoa))))
 		return (NULL);
-	list->bin = ft_get_bin(&f, sizeof(f));
-	ft_cut_bin_64(&list);
+	ft_set_list_ftoadbl(&list, ieee);
 	if ((str = ft_nan_inf(&list)) != NULL)
 		return (str);
+	vir = ft_size_vir(f);
 	list->mant = ft_get_mant(&list);
 	list->expo = ft_get_expo(&list);
-	vir = ft_size_vir(f);
-	list->signe = list->signe == 1 ? -1 : 1;
 	str = ft_mult_str(list->mant, list->expo);
 	str = ft_put_point(str, vir);
-//	if (hash || (prec != -1 && prec != 0))
-//		str = ft_check_size(str);
-	str = ft_cut_prec(str, prec, vir, hash);
-	if ((long)(ft_strlen(str) - vir) < prec)
+	if ((long)(ft_strlen(str) - vir) > prec)
+		str = ft_cut_prec(str, prec, vir, hash);
+	if (prec != 0 && prec != -1 && (long)(ft_strlen(str) - vir - 1) < prec)
 		str = ft_zero_prec(str, prec);
-	if (list->signe == -1)
-		str = ft_strjoinfree("-", str, 2);
+	list->signe == 1 ? (str = ft_strjoinfree("-", str, 2)) : str;
 	ft_free_ftoa(&list);
 	return (str);
 }
-/*
-#include <float.h>
-#include <limits.h>
-
-int		main()
-{
-	double	f = DBL_MIN;
-	char	*str;
-
-	printf("f   = %.5000lf\n", f);
-	str = ft_ftoa_64(f, 100, 0);
-	printf("str = %s\n", str);
-	return (0);
-}*/

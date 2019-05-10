@@ -6,43 +6,49 @@
 #    By: flhember <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/11 15:51:59 by flhember          #+#    #+#              #
-#    Updated: 2019/04/12 17:19:02 by flhember         ###   ########.fr        #
+#    Updated: 2019/05/06 18:04:49 by flhember         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libftprintf.a
 CC = clang
-FLAGS = -g3 -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
 SRC_PATH = ./srcs/
 OBJ_PATH = ./obj/
 LIB_PATH = ./Libft/
 INC_PATH = ./includes/
 
-SRC_FILES = ft_printf.c 		\
-			ft_set_tab.c		\
-			ft_creatlst.c		\
-			ft_convert_param.c	\
-			ft_get_option.c		\
-			ft_convert_c.c		\
-			ft_convert_s.c		\
-			ft_convert_p.c		\
-			ft_convert_o.c		\
-			ft_convert_x.c		\
-			ft_convert_u.c		\
-			ft_convert_f.c		\
-			ft_free.c			\
-			ft_print_tab.c		\
-			ft_convert_i_d.c	\
-			ft_get_good_size.c	\
-			ft_set_list.c		\
-			ft_put_option.c		\
-			ft_put_option_x.c	\
-			ft_ftoa.c			\
-			ft_math_str.c		\
-			ft_get_float.c		\
-			ft_util_float.c		\
-			ft_ftoa_80.c
+SRC_FILES = ft_printf.c 			\
+			ft_set_tab.c			\
+			ft_creatlst.c			\
+			ft_convert_param.c		\
+			ft_get_option.c			\
+			ft_convert_c.c			\
+			ft_convert_s.c			\
+			ft_convert_p.c			\
+			ft_convert_o.c			\
+			ft_convert_x.c			\
+			ft_convert_u.c			\
+			ft_convert_f.c			\
+			ft_convert_b.c			\
+			ft_convert_percent.c	\
+			ft_free.c				\
+			ft_print_tab.c			\
+			ft_convert_i_d.c		\
+			ft_get_good_size.c		\
+			ft_set_list.c			\
+			ft_put_option.c			\
+			ft_put_option_x.c		\
+			ft_ftoa.c				\
+			ft_ftoa_ldbl.c			\
+			ft_round_f.c			\
+			ft_math_str.c			\
+			ft_util_float.c			\
+			ft_util_float_bis.c		\
+			ft_return_null_x.c		\
+			ft_put_flag_size.c		\
+			ft_check_percent.c
 
 INC_FILES = ft_printf.h
 

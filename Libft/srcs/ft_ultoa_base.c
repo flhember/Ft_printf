@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/07 02:32:33 by flhember          #+#    #+#             */
-/*   Updated: 2019/03/21 16:56:12 by flhember         ###   ########.fr       */
+/*   Updated: 2019/04/29 12:53:46 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ static int		ft_get_size(unsigned long n, int base)
 	return (size);
 }
 
-char	*ft_ultoa_base(unsigned long n, int base)
+char			*ft_ultoa_base(unsigned long n, int base)
 {
 	char			*ascii;
 	char			*str;
 	int				size;
-	unsigned long 	cpy;
+	unsigned long	cpy;
 
 	cpy = n;
 	size = ft_get_size(cpy, base);

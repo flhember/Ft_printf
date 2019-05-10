@@ -6,88 +6,15 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/04 12:38:06 by flhember          #+#    #+#             */
-/*   Updated: 2019/04/19 13:31:59 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/06 16:28:14 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
 
-char		*ft_ld_in_str(long double res, int i)
-{
-	char	*str;
-	int		j;
-
-	j = 0;
-	if (!(str = (char*)ft_memalloc(sizeof(char) * 1000)))
-		return (NULL);
-	if (i == 1)
-		str[j++] = (int)res + 49;
-	else if (i == 0)
-		str[j++] = (int)res + 48;
-	if ((int)res > 0)
-		res = (res - (int)res);
-	str[j++] = '.';
-	while (res && j < 200)
-	{
-		res *=  10.00;
-		str[j++] = (int)res + 48;
-		res -= (int)res;
-	}
-	return (str);
-}
-
-int			ft_size_vir(long double f)
-{
-	int		i;
-
-	i = 1;
-	if ((int)f == 9)
-		return(1);
-	while (f > 9 || f < -9)
-	{
-		f /= 10;
-		i++;
-	}
-	return (i);
-}
-
-char		*ft_get_rond(char *str, int i)
-{
-	char	*str_final;
-
-	i = ft_strlen(str) - 1;
-	str_final = NULL;
-	if (str[i] == '.')
-		i--;
-	if (str[i] >= '5' && str[i] <= '9')
-	{
-		if (str[i - 1] == '.')
-			i--;
-		if (str[i - 1] != '9')
-			str[i - 1] = str[i - 1] + 1;
-		else
-		{
-			while (str[i - 1] == '9')
-			{
-				str[i - 1] = '0';
-				i--;
-				if (str[i - 1] == '.')//&& --i)
-					i--;	//str[i - 1] += 1;
-				if (str[i - 1] != '9')
-					str[i - 1] += 1;
-			}
-			if (str[0] == '0')
-				str = ft_strjoinfree("1", str, 2);
-		}
-	}
-	str_final = ft_strsub(str, 0, (ft_strlen(str) - 1));
-	ft_strdel(&str);
-	return (str_final);
-}
-
 char		*ft_check_hash(char *str, int hash)
 {
-	char 	*str_final;
+	char	*str_final;
 
 	str_final = NULL;
 	if (str[ft_strlen(str) - 1] == '.')
@@ -102,75 +29,76 @@ char		*ft_check_hash(char *str, int hash)
 	return (str);
 }
 
-char			*ft_round_after_vir(char *str, int i)
+char		*ft_good_var(va_list ap, t_option **list)
 {
-	int		flag;
+	char	*str;
 
-	flag = 0;
-	if (str[i - 2] == '9')
+	str = NULL;
+	if (!((*list)->size) || (*list)->size[0] == 'l')
 	{
-		flag++;
-		while (i > 0 && str[i - 2] == '9')
-		{	
-			str[i - 2] = 0;
-			i--;
-		}
-		if (i - 2 >= 0)
-			str[i - 2] += 1;
+		if ((*list)->prec == 0)
+			str = ft_ftoa_dbl(va_arg(ap, double), 6, (*list)->hash);
+		else if ((*list)->prec == -1)
+			str = ft_ftoa_dbl(va_arg(ap, double), 0, (*list)->hash);
+		else
+			str = ft_ftoa_dbl(va_arg(ap, double), (*list)->prec, (*list)->hash);
 	}
-	else
-		str[i - 2] += 1;
-	if (flag || i == 0)
-		str = ft_strjoinfree("1", str, 2);
+	else if ((*list)->size[0] == 'L')
+	{
+		if ((*list)->prec == 0)
+			str = ft_ftoa_ldbl(va_arg(ap, long double), 6, (*list)->hash);
+		else if ((*list)->prec == -1)
+			str = ft_ftoa_ldbl(va_arg(ap, long double), 0, (*list)->hash);
+		else
+			str = ft_ftoa_ldbl(va_arg(ap, long double),
+					(*list)->prec, (*list)->hash);
+	}
 	return (str);
 }
 
-char			*ft_get_rond_null(char *str, int hash, int prec, int vir)
+void		ft_free_float(t_option **list, char *str, char *var)
 {
-	int		i;
-	char	*str_final;
-
-	i = 0;
-	if (!(str_final = (char *)ft_memalloc(sizeof(char) * (prec + vir + 4))))
-		return (NULL);
-	while (i < prec + vir + 3)
-	{
-		str_final[i] = str[i];
-		i++;
-	}
-	str_final = ft_get_rond(str_final, i);
-	i = ft_strlen(str_final) - 1;
-	if (str_final[i] > '5' && str_final[i] <= '9')
-		str_final = ft_round_after_vir(str_final, i);
-	str_final = ft_strsub(str_final, 0, ft_strlen(str_final) - 2);
-	if (hash)
-		str_final = ft_strjoinfree(str_final, ".", 1);
-	return (str_final);
+	ft_free_option(list);
+	ft_strdel(&str);
+	ft_strdel(&var);
 }
 
-char			*ft_cut_prec(char *str, int prec, int vir, int hash)
+void		ft_verif_size(char **s1, char **s2)
 {
-	char	*str_final;
 	int		i;
+	int		j;
 
-	i = 0;
-	str_final = NULL;
-	if (prec == 0 || prec == - 1)
-		return (str_final = ft_get_rond_null(str, hash, prec, vir));
-	if (!(str_final = (char *)ft_memalloc(sizeof(char) * (prec + vir + 3))))
-		return (NULL);
-	while (i < prec + vir + 2)
+	i = ft_strlen((*s1));
+	j = ft_strlen((*s2));
+	if (i < j)
+		while (i++ < j)
+			*s1 = ft_strjoinfree("0", *s1, 2);
+	else if (j < i)
+		while (j++ < i)
+			*s2 = ft_strjoinfree("0", *s2, 2);
+}
+
+char		*ft_get_round_after(char *str, int i)
+{
+	if (str[i] >= '5' && str[i] <= '9')
 	{
-		str_final[i] = str[i];
-		i++;
+		if (str[i - 1] == '.')
+			i--;
+		if (str[i - 1] != '9')
+			str[i - 1] = str[i - 1] + 1;
+		else
+		{
+			while (str[i - 1] == '9')
+			{
+				str[i - 1] = '0';
+				i--;
+				if (str[i - 1] == '.')
+					i--;
+			}
+			str[i - 1] += 1;
+			if (str[0] == '0' && i == 0)
+				str = ft_strjoinfree("1", str, 2);
+		}
 	}
-	ft_strdel(&str);
-	if (str_final[0] != '0' && str_final[1] != '\0')
-	{
-		str_final = ft_get_rond(str_final, i);
-		str_final = ft_check_hash(str_final, hash);
-	}
-	else if (prec >= 0 && ft_strlen(str_final) > 1)
-		return (ft_strsub(str_final, 0, ft_strlen(str_final) - 1));
-	return (str_final);
+	return (str);
 }

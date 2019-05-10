@@ -6,13 +6,13 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/24 16:03:59 by flhember          #+#    #+#             */
-/*   Updated: 2019/04/09 16:17:14 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/01 11:55:13 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf.h"
 
-char	*ft_get_good_size_unsigned_big(va_list ap, t_option **list, int base)
+char	*ft_get_size_unsigned_big(va_list ap, t_option **list, int base)
 {
 	if (!(*list)->size)
 		return (ft_ultoa_base_big(va_arg(ap, unsigned int), base));

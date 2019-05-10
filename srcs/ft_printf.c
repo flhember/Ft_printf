@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/25 13:47:44 by flhember          #+#    #+#             */
-/*   Updated: 2019/04/11 13:24:41 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/08 14:31:09 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ int		ft_printf(char *str, ...)
 	t_conv		*list;
 	char		**tab;
 	long long	size_tab;
+	int			i;
 
+	i = 0;
 	tab = NULL;
 	list = NULL;
 	if (str == NULL)
@@ -26,9 +28,10 @@ int		ft_printf(char *str, ...)
 	va_start(ap, str);
 	ft_creatlst(&list);
 	tab = ft_set_tab(str, tab);
+	tab = ft_check_percent(tab);
 	tab = ft_convert_param(tab, &list, ap);
 	va_end(ap);
-	size_tab = ft_print_tab(tab);
+	size_tab = ft_print_tab(tab, i);
 	ft_free_list(&list);
 	if (tab)
 		ft_free_tab(tab);

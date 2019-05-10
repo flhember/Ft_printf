@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/21 12:34:11 by flhember          #+#    #+#             */
-/*   Updated: 2019/03/30 23:19:50 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/01 14:23:20 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static char		*ft_filling(char *str, char *var, t_option **list)
 	return (str);
 }
 
-static size_t	ft_find_good_size2(char *var, t_option **list, size_t size)
+static size_t	ft_find_good_size_bis(char *var, t_option **list, size_t size)
 {
 	size_t		i;
 
@@ -55,7 +55,11 @@ static size_t	ft_find_good_size(char *var, t_option **list, size_t size)
 	i = 0;
 	if (var[0] == '0' && var[1] == '\0' &&
 			(*list)->prec == -1 && (*list)->min == 0)
+	{
+		if ((var[0] != '-' && ((*list)->space || ((*list)->plus))))
+			return (1);
 		return (0);
+	}
 	if (var[0] != '0' && var[1] != '\0' && (*list)->prec == -1)
 		(*list)->prec++;
 	if ((int)(*list)->min >= (*list)->prec && (*list)->min > ft_strlen(var))
@@ -66,7 +70,7 @@ static size_t	ft_find_good_size(char *var, t_option **list, size_t size)
 		return (size);
 	}
 	else
-		size = ft_find_good_size2(var, list, size);
+		size = ft_find_good_size_bis(var, list, size);
 	return (size);
 }
 
@@ -77,9 +81,9 @@ char			*ft_convert_i_d(va_list ap, char *str)
 	char		*strfinal;
 	size_t		size_malloc;
 
+	list = NULL;
 	size_malloc = 0;
 	strfinal = NULL;
-	list = NULL;
 	if (str[1] == 'i' || str[1] == 'd')
 	{
 		ft_strdel(&str);

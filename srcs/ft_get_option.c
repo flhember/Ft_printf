@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 13:37:40 by flhember          #+#    #+#             */
-/*   Updated: 2019/04/12 17:32:24 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/08 14:40:23 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,7 @@ static void	ft_get_size_option(t_option **list, char *str, size_t i)
 	{
 		if (str[i] == 'l' || str[i] == 'h' || str[i] == 'L')
 		{
-			if ((str[i - 1] == 'l' || str[i + 1] == 'l') && str[i++])
-				(*list)->size = ft_strdup("ll");
-			else if ((str[i - 1] == 'h' || str[i + 1] == 'h') && str[i++])
-				(*list)->size = ft_strdup("hh");
-			else
-				(*list)->size = ft_strsub(str, i, 1);
+			ft_put_flag_size(str, i, list);
 			i++;
 		}
 		else if (str[i] == ' ' || str[i] == '-' || str[i] == '#' ||
@@ -135,7 +130,7 @@ t_option	*ft_get_option(char *str)
 		return (NULL);
 	ft_set_list(&list);
 	list->flag = str[(ft_strlen(str) - 1)];
-	if (strlen(str) > 2)
+	if (ft_strlen(str) > 2)
 	{
 		ft_get_min_prec(&list, str, i);
 		ft_get_size_option(&list, str, i);

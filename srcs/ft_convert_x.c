@@ -6,7 +6,7 @@
 /*   By: flhember <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/21 12:35:04 by flhember          #+#    #+#             */
-/*   Updated: 2019/03/28 15:58:42 by flhember         ###   ########.fr       */
+/*   Updated: 2019/05/01 12:38:38 by flhember         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static char	*ft_get_good_size(va_list ap, t_option **list, char *var, char *str)
 	if (str[ft_strlen(str) - 1] == 'x')
 		var = ft_get_good_size_unsigned(ap, list, 16);
 	else if (str[ft_strlen(str) - 1] == 'X')
-		var = ft_get_good_size_unsigned_big(ap, list, 16);
+		var = ft_get_size_unsigned_big(ap, list, 16);
 	return (var);
 }
 
@@ -116,12 +116,7 @@ char		*ft_convert_x(va_list ap, char *str)
 	var_hexa = ft_get_good_size(ap, &list, var_hexa, str);
 	if (var_hexa[0] == '0' && var_hexa[1] == '\0' && list->prec == -1
 			&& list->min == 0)
-	{
-		ft_strdel(&str);
-		ft_free_option(&list);
-		ft_strdel(&var_hexa);
-		return (ft_strdup(""));
-	}
+		return (ft_return_null_x(&list, str, var_hexa));
 	if (str[1] == 'x' || str[1] == 'X')
 	{
 		ft_strdel(&str);
